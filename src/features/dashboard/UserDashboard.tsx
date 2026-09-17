@@ -32,6 +32,16 @@ import { Card } from '../../components/common/Card';
 import { Badge } from '../../components/common/Badge';
 import { Button } from '../../components/common/Button';
 import { FindYourMentorModal } from '../../components/common/FindYourMentorModal';
+import { RecentlyReadSection } from './RecentlyReadSection';
+import { HabitGoalTracker } from './HabitGoalTracker';
+import { DailyReflectionCard } from './DailyReflectionCard';
+import { ReflectionTrendsChart } from './ReflectionTrendsChart';
+import { DailyMoodTracker } from './DailyMoodTracker';
+import { GoalRemindersManager } from './GoalRemindersManager';
+import { CommunityChallenges } from './CommunityChallenges';
+import { RequestMentorSection } from './RequestMentorSection';
+import { GrowthRoadmap } from './GrowthRoadmap';
+import { AchievementSystem } from './AchievementSystem';
 
 interface DashboardProps {
   onNavigate: (view: string, params?: Record<string, any>) => void;
@@ -44,22 +54,9 @@ export const UserDashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
   const [myQuestions, setMyQuestions] = useState<Question[]>([]);
   const [events, setEvents] = useState<EventItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-
-  // Journaling state
-  const [dailyPrompt, setDailyPrompt] = useState<{ prompt: string; scriptureReference: string; theme: string }>({
-    prompt: 'Where did you sense God calling you to pause and receive His peace today?',
-    scriptureReference: 'Psalm 46:10 — "Be still, and know that I am God; I will be exalted among the nations."',
-    theme: 'Divine Rest & Surrender'
-  });
-  const [journalReflection, setJournalReflection] = useState('');
-  const [gratitudeNote, setGratitudeNote] = useState('');
-  const [selectedMood, setSelectedMood] = useState<'peaceful' | 'seeking' | 'grateful' | 'restless' | 'strengthened'>('peaceful');
   const [journalEntries, setJournalEntries] = useState<JournalEntry[]>([]);
-  const [isSavingJournal, setIsSavingJournal] = useState(false);
-  const [journalSavedFeedback, setJournalSavedFeedback] = useState(false);
-  const [showPastEntries, setShowPastEntries] = useState(false);
 
-  // New Features: Reflection of the Day & Growth Milestones & Find Your Mentor
+  // Features: Reflection of the Day & Growth Milestones & Find Your Mentor
   const [reflectionOfTheDay, setReflectionOfTheDay] = useState<DailyReflectionResult | null>(null);
   const [isGeneratingReflection, setIsGeneratingReflection] = useState(false);
   const [growthProfile, setGrowthProfile] = useState<UserGrowthProfile | null>(null);
@@ -70,15 +67,10 @@ export const UserDashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
       if (!user) return;
       setIsLoading(true);
       try {
-        const [allContent, myQ, evts, promptData, entriesData, reflectionData, milestonesData] = await Promise.all([
+        const [allContent, myQ, evts, entriesData, reflectionData, milestonesData] = await Promise.all([
           api.getContent({ status: 'published' }),
           api.getQuestions({ filter: 'mine' }),
           api.getEvents(),
-          api.getDailyJournalPrompt().catch(() => ({
-            prompt: 'Where did you sense God calling you to pause and receive His grace today?',
-            scriptureReference: 'Psalm 46:10 — "Be still, and know that I am God."',
-            theme: 'Divine Rest'
-          })),
           api.getJournalEntries().catch(() => []),
           api.getReflectionOfTheDay().catch(() => null),
           api.getGrowthMilestones().catch(() => null)
@@ -94,7 +86,6 @@ export const UserDashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
         setRecommendedArticles(recommended.length > 0 ? recommended : allContent.slice(0, 3));
         setMyQuestions(myQ);
         setEvents(evts.slice(0, 2));
-        if (promptData) setDailyPrompt(promptData);
         if (entriesData) setJournalEntries(entriesData);
         if (reflectionData) setReflectionOfTheDay(reflectionData);
         if (milestonesData) setGrowthProfile(milestonesData);
@@ -114,36 +105,6 @@ export const UserDashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
       console.error('Failed to regenerate reflection', e);
     } finally {
       setIsGeneratingReflection(false);
-    }
-  };
-
-  const handleSaveJournalReflection = async () => {
-    if (!journalReflection.trim()) return;
-    setIsSavingJournal(true);
-    try {
-      const newEntry = await api.saveJournalEntry({
-        prompt: dailyPrompt.prompt,
-        scriptureReference: dailyPrompt.scriptureReference,
-        reflectionText: journalReflection,
-        gratitudeNote: gratitudeNote || undefined,
-        moodTag: selectedMood
-      });
-      setJournalEntries(prev => [newEntry, ...prev]);
-      setJournalSavedFeedback(true);
-      setTimeout(() => setJournalSavedFeedback(false), 3000);
-    } catch (err) {
-      console.error('Failed to save reflection', err);
-    } finally {
-      setIsSavingJournal(false);
-    }
-  };
-
-  const handleDeleteJournalEntry = async (id: string) => {
-    try {
-      await api.deleteJournalEntry(id);
-      setJournalEntries(prev => prev.filter(e => e.id !== id));
-    } catch (e) {
-      console.error(e);
     }
   };
 
@@ -184,7 +145,7 @@ export const UserDashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
             Here is something nourishing for your mind and heart today. Take what serves you, and leave the rest with grace.
           </p>
 
-          {/* User Interests tags */}
+          {/* User Interests tags & Quick Section Jump */}
           <div className="flex flex-wrap items-center gap-1.5 pt-2">
             <span className="text-xs text-[#A8957C] mr-1">Your focus seasons:</span>
             {user.interests.map(i => (
@@ -197,6 +158,53 @@ export const UserDashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
               className="text-xs text-[#B95B3D] font-medium hover:underline ml-2 cursor-pointer"
             >
               Adjust focus &rarr;
+            </button>
+          </div>
+
+          {/* Quick Hub Navigation Anchors */}
+          <div className="flex flex-wrap items-center gap-2 pt-1">
+            <button
+              onClick={() => {
+                const el = document.getElementById('growth-roadmap');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#594D3C] hover:text-[#B95B3D] bg-white/70 hover:bg-white border border-[#E7DFD4] px-2.5 py-1 rounded-full cursor-pointer transition-colors shadow-2xs"
+            >
+              <Compass className="w-3 h-3 text-[#B95B3D]" />
+              <span>Growth Roadmap</span>
+            </button>
+
+            <button
+              onClick={() => {
+                const el = document.getElementById('community-challenges');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#594D3C] hover:text-[#B95B3D] bg-white/70 hover:bg-white border border-[#E7DFD4] px-2.5 py-1 rounded-full cursor-pointer transition-colors shadow-2xs"
+            >
+              <Users className="w-3 h-3 text-[#B95B3D]" />
+              <span>Sisterhood Challenges</span>
+            </button>
+
+            <button
+              onClick={() => {
+                const el = document.getElementById('request-mentor');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#594D3C] hover:text-[#B95B3D] bg-white/70 hover:bg-white border border-[#E7DFD4] px-2.5 py-1 rounded-full cursor-pointer transition-colors shadow-2xs"
+            >
+              <Heart className="w-3 h-3 text-[#B95B3D]" />
+              <span>Request Mentor</span>
+            </button>
+
+            <button
+              onClick={() => {
+                const el = document.getElementById('habit-tracker');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#594D3C] hover:text-[#B95B3D] bg-white/70 hover:bg-white border border-[#E7DFD4] px-2.5 py-1 rounded-full cursor-pointer transition-colors shadow-2xs"
+            >
+              <Flame className="w-3 h-3 text-[#B95B3D]" />
+              <span>Habit Tracker</span>
             </button>
           </div>
         </div>
@@ -311,187 +319,39 @@ export const UserDashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
             )}
           </div>
 
-          {/* DAILY FAITH REFLECTION JOURNAL */}
-          <div id="daily-faith-journal" className="bg-[#FAF8F5] rounded-3xl border border-[#E7DFD4] p-6 sm:p-8 space-y-6 shadow-xs">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#E7DFD4] pb-4">
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <PenLine className="w-5 h-5 text-[#B95B3D]" />
-                  <h3 className="font-serif text-2xl text-[#211C15]">Daily Faith Journal & Reflection</h3>
-                </div>
-                <p className="text-xs text-[#7E6D56]">
-                  A private sanctuary to pause, align with Scripture, and document your spiritual journey.
-                </p>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <span className="inline-flex items-center gap-1 text-[11px] font-medium text-[#5D7052] bg-[#EEF2EB] px-2.5 py-1 rounded-full">
-                  <Lock className="w-3 h-3" /> Private to you
-                </span>
-                <button
-                  onClick={() => setShowPastEntries(!showPastEntries)}
-                  className="text-xs font-semibold text-[#B95B3D] hover:underline inline-flex items-center gap-1 cursor-pointer"
-                >
-                  {showPastEntries ? 'Hide Past Entries' : `View Past (${journalEntries.length})`}
-                  {showPastEntries ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-                </button>
-              </div>
-            </div>
-
-            {/* Daily Prompt & Scripture Card */}
-            <div className="p-5 rounded-2xl bg-[#FAF0ED] border border-[#F3DDD7] space-y-3">
-              <div className="flex items-center justify-between">
-                <Badge variant="terracotta" size="sm">Today&apos;s Prompt &bull; {dailyPrompt.theme}</Badge>
-                <span className="text-[11px] text-[#7E6D56]">
-                  {new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
-                </span>
-              </div>
-
-              <h4 className="font-serif text-lg sm:text-xl text-[#211C15] font-normal leading-snug">
-                &ldquo;{dailyPrompt.prompt}&rdquo;
-              </h4>
-
-              <div className="pt-2 border-t border-[#F3DDD7]/80 flex items-center gap-2 text-xs text-[#7E6D56] italic">
-                <Sun className="w-3.5 h-3.5 text-[#B95B3D] shrink-0" />
-                <span>Scripture Anchor: {dailyPrompt.scriptureReference}</span>
-              </div>
-            </div>
-
-            {/* Reflection Textarea */}
-            <div className="space-y-4">
-              <div className="space-y-1.5">
-                <label className="block text-xs font-semibold uppercase tracking-wider text-[#594D3C]">
-                  Your Personal Reflection
-                </label>
-                <textarea
-                  rows={4}
-                  value={journalReflection}
-                  onChange={(e) => setJournalReflection(e.target.value)}
-                  placeholder="Write your thoughts freely before the Lord. What is happening in your spirit, marriage, family, or purpose today?"
-                  className="w-full p-4 rounded-2xl border border-[#D2C4B1] bg-white text-sm text-[#211C15] placeholder-[#A8957C] focus:outline-none focus:border-[#B95B3D] focus:ring-1 focus:ring-[#B95B3D] leading-relaxed resize-y"
-                />
-              </div>
-
-              {/* Gratitude & Mood Row */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-[#594D3C]">
-                    Gratitude Offering (Optional)
-                  </label>
-                  <input
-                    type="text"
-                    value={gratitudeNote}
-                    onChange={(e) => setGratitudeNote(e.target.value)}
-                    placeholder="One specific blessing I thank God for..."
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-[#D2C4B1] bg-white text-xs text-[#211C15] placeholder-[#A8957C] focus:outline-none focus:border-[#B95B3D]"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-[#594D3C]">
-                    Current Spiritual State
-                  </label>
-                  <div className="flex flex-wrap gap-1.5 pt-0.5">
-                    {(['peaceful', 'grateful', 'seeking', 'strengthened', 'restless'] as const).map(mood => (
-                      <button
-                        key={mood}
-                        type="button"
-                        onClick={() => setSelectedMood(mood)}
-                        className={`text-xs px-2.5 py-1 rounded-full border capitalize transition-colors cursor-pointer ${
-                          selectedMood === mood
-                            ? 'bg-[#B95B3D] text-white border-[#B95B3D]'
-                            : 'bg-white text-[#7E6D56] border-[#D2C4B1] hover:border-[#B95B3D]'
-                        }`}
-                      >
-                        {mood}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Save Button & Feedback */}
-              <div className="flex items-center justify-between pt-2">
-                <span className="text-[11px] text-[#A8957C]">
-                  {journalReflection.trim().split(/\s+/).filter(Boolean).length} words
-                </span>
-
-                <div className="flex items-center gap-3">
-                  {journalSavedFeedback && (
-                    <span className="text-xs text-[#5D7052] flex items-center gap-1 font-medium animate-fade-in">
-                      <CheckCircle className="w-3.5 h-3.5" /> Reflection Saved to Sanctuary!
-                    </span>
-                  )}
-                  <Button
-                    variant="primary"
-                    size="sm"
-                    onClick={handleSaveJournalReflection}
-                    disabled={isSavingJournal || !journalReflection.trim()}
-                    icon={<Save className="w-3.5 h-3.5" />}
-                  >
-                    {isSavingJournal ? 'Saving...' : 'Save Reflection'}
-                  </Button>
-                </div>
-              </div>
-            </div>
-
-            {/* Past Journal Entries Accordion */}
-            {showPastEntries && (
-              <div className="pt-4 border-t border-[#E7DFD4] space-y-4 animate-fade-in">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-[#594D3C]">
-                  Archived Reflections & Answered Prayers ({journalEntries.length})
-                </h4>
-
-                {journalEntries.length === 0 ? (
-                  <p className="text-xs text-[#7E6D56] py-3 text-center bg-white rounded-xl border border-[#E7DFD4]">
-                    No past reflections saved yet. Your saved entries will be preserved here securely.
-                  </p>
-                ) : (
-                  <div className="space-y-3 max-h-80 overflow-y-auto pr-1">
-                    {journalEntries.map(entry => (
-                      <div
-                        key={entry.id}
-                        className="p-4 rounded-xl bg-white border border-[#E7DFD4] space-y-2 text-xs"
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <span className="font-semibold text-[#211C15]">{entry.date}</span>
-                            {entry.moodTag && (
-                              <Badge variant="sage" size="sm" className="capitalize">
-                                {entry.moodTag}
-                              </Badge>
-                            )}
-                          </div>
-                          <button
-                            onClick={() => handleDeleteJournalEntry(entry.id)}
-                            className="text-[#A8957C] hover:text-[#A84848] p-1 cursor-pointer"
-                            title="Delete entry"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-
-                        <p className="font-serif text-[#211C15] text-sm italic font-normal">
-                          &ldquo;{entry.prompt}&rdquo;
-                        </p>
-
-                        <p className="text-[#594D3C] leading-relaxed whitespace-pre-line">
-                          {entry.reflectionText}
-                        </p>
-
-                        {entry.gratitudeNote && (
-                          <div className="p-2.5 rounded-lg bg-[#FAF0ED] text-[#7E6D56] text-[11px] flex items-center gap-1.5">
-                            <Heart className="w-3 h-3 text-[#B95B3D] fill-[#B95B3D] shrink-0" />
-                            <span><strong>Gratitude:</strong> {entry.gratitudeNote}</span>
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
+          {/* DAILY REFLECTION: ONE GRATITUDE OR ONE CHALLENGE */}
+          <div id="daily-reflection">
+            <DailyReflectionCard onReflectionSaved={(entry) => setJournalEntries(prev => [entry, ...prev])} />
           </div>
+
+          {/* DAILY MOOD & SPIRIT CHECK-IN WITH EMOJI CORRELATION */}
+          <DailyMoodTracker
+            reflections={journalEntries}
+            onNavigateToJournal={() => {
+              const el = document.getElementById('daily-reflection');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }}
+          />
+
+          {/* REFLECTION TRENDS & GROWTH DEPTH CHART */}
+          <ReflectionTrendsChart entries={journalEntries} />
+
+          {/* GAMIFIED BADGE & MILESTONES ACHIEVEMENT SYSTEM */}
+          <div id="achievements-section">
+            <AchievementSystem />
+          </div>
+
+          {/* GROWTH ROADMAP: WEEKLY BITE-SIZED ACTION STEPS */}
+          <GrowthRoadmap />
+
+          {/* COMMUNITY SISTERHOOD CHALLENGES (7-DAY & 30-DAY THEMED SPRINTS) */}
+          <CommunityChallenges />
+
+          {/* REQUEST A MENTOR: GROWTH INTERESTS MATCHING FORM */}
+          <RequestMentorSection />
+
+          {/* RECENTLY READ SECTION: PICK UP WHERE YOU LEFT OFF */}
+          <RecentlyReadSection onNavigate={onNavigate} />
 
           {/* Saved Articles (Favorites / Bookmarks) */}
           <div className="space-y-4">
@@ -597,8 +457,16 @@ export const UserDashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
           </div>
         </div>
 
-        {/* Right Column: Growth Milestones, Questions Status & Community / Events */}
+        {/* Right Column: Habit Tracker, Goal Reminders, Growth Milestones, Questions Status & Community / Events */}
         <div className="lg:col-span-4 space-y-8">
+
+          {/* GOAL REMINDERS & TOAST ALERT SYSTEM */}
+          <GoalRemindersManager />
+
+          {/* VISUAL HABIT & GOAL TRACKER */}
+          <div id="habit-tracker">
+            <HabitGoalTracker />
+          </div>
 
           {/* GROWTH MILESTONES & DIGITAL BADGES */}
           <Card className="space-y-4 border-[#E7DFD4] bg-white">
@@ -688,6 +556,18 @@ export const UserDashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
                   </div>
                 ))}
               </div>
+
+              <button
+                type="button"
+                onClick={() => {
+                  const el = document.getElementById('achievements-section');
+                  if (el) el.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="w-full mt-1 py-1.5 px-2.5 rounded-xl bg-[#FAF8F5] hover:bg-[#F0EBE1] border border-[#E7DFD4] text-[11px] font-semibold text-[#B95B3D] flex items-center justify-center gap-1 transition-colors cursor-pointer"
+              >
+                <Award className="w-3.5 h-3.5 text-[#B95B3D]" />
+                <span>View Full Trophy Collection ({growthProfile?.badges?.length || 10}+ Badges)</span>
+              </button>
             </div>
           </Card>
 

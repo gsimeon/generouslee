@@ -281,7 +281,15 @@ export const api = {
     scriptureReference: string;
     reflectionText: string;
     gratitudeNote?: string;
+    photoUrl?: string;
+    photoCaption?: string;
+    voiceTranscribed?: boolean;
+    promptCategory?: string;
+    category?: string;
     moodTag?: string;
+    moodEmoji?: string;
+    sentimentScore?: number;
+    wordCount?: number;
   }): Promise<JournalEntry> {
     return callOrFallback(
       '/api/v1/journal/entries',

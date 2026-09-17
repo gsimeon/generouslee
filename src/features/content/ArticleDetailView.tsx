@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { api } from '../../services/api';
 import { ContentItem } from '../../types';
+import { addRecentlyRead } from '../../utils/readingHistory';
 import { Badge } from '../../components/common/Badge';
 import { Button } from '../../components/common/Button';
 import { Card } from '../../components/common/Card';
@@ -39,6 +40,7 @@ export const ArticleDetailView: React.FC<ArticleDetailProps> = ({ slug, onNaviga
       try {
         const item = await api.getContentBySlug(slug);
         setArticle(item);
+        addRecentlyRead(item, 85);
         const related = await api.getContent({ category: item.category });
         setRelatedArticles(related.filter(r => r.id !== item.id).slice(0, 3));
       } catch (err) {

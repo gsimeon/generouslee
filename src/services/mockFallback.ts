@@ -78,16 +78,114 @@ let savedContentByUser: Record<string, string[]> = getStorage(STORAGE_KEYS.SAVED
 let userJournalEntries: Record<string, JournalEntry[]> = getStorage(STORAGE_KEYS.JOURNAL, {
   'usr-member-1': [
     {
-      id: 'jrn-1',
+      id: 'jrn-7',
+      userId: 'usr-member-1',
+      date: '2026-09-17',
+      prompt: 'One Gratitude for Today',
+      scriptureReference: '1 Thessalonians 5:18 — "Give thanks in all circumstances; for this is God’s will for you in Christ Jesus."',
+      reflectionText: 'Morning quiet time before the house woke up. I reflected on how far God has brought our family over the past season. The patience required with my toddlers is softening my own self-reliance into holy dependency on Christ.',
+      gratitudeNote: 'Grateful for peaceful morning sunlight and a warm cup of herbal tea.',
+      category: 'Motherhood',
+      moodTag: 'peaceful',
+      moodEmoji: '🕊️',
+      wordCount: 46,
+      sentimentScore: 92,
+      createdAt: '2026-09-17T07:15:00Z',
+      updatedAt: '2026-09-17T07:15:00Z'
+    },
+    {
+      id: 'jrn-6',
+      userId: 'usr-member-1',
+      date: '2026-09-16',
+      prompt: 'One Challenge & Growth Edge',
+      scriptureReference: '2 Corinthians 12:9 — "My grace is sufficient for you, for my power is made perfect in weakness."',
+      reflectionText: 'Felt stretched thin with consulting deliverables and home management. Instead of masking exhaustion with hyper-productivity, I paused for 10 minutes, surrendered the urge to control every outcome, and asked the Lord for wisdom and discernment to steward only what He commanded.',
+      category: 'Career',
+      moodTag: 'strengthened',
+      moodEmoji: '🌿',
+      wordCount: 47,
+      sentimentScore: 82,
+      createdAt: '2026-09-16T18:30:00Z',
+      updatedAt: '2026-09-16T18:30:00Z'
+    },
+    {
+      id: 'jrn-5',
+      userId: 'usr-member-1',
+      date: '2026-09-15',
+      prompt: 'Gratitude & Daily Challenge',
+      scriptureReference: '1 Corinthians 6:19 — "Your body is a temple of the Holy Spirit."',
+      reflectionText: 'Gratitude:\nHealthy home, fresh produce, and restorative sleep last night.\n\nChallenge Faced & Grace Needed:\nResisting physical exhaustion after a long workday. Decided to honor my temple by taking an evening walk with the kids without looking at my smartphone.',
+      gratitudeNote: 'Evening walk in cool air without notifications.',
+      category: 'Health & Temple',
+      moodTag: 'peaceful',
+      moodEmoji: '🕊️',
+      wordCount: 44,
+      sentimentScore: 89,
+      createdAt: '2026-09-15T20:00:00Z',
+      updatedAt: '2026-09-15T20:00:00Z'
+    },
+    {
+      id: 'jrn-4',
+      userId: 'usr-member-1',
+      date: '2026-09-14',
+      prompt: 'One Gratitude for Today',
+      scriptureReference: 'Ephesians 4:2-3 — "Be completely humble and gentle; be patient, bearing with one another in love."',
+      reflectionText: 'My husband and I sat together for 20 minutes of prayer after dinner. We talked through financial decisions with unity rather than tension, keeping Christ at the center of our marriage covenant.',
+      gratitudeNote: 'Deepening partnership and spiritual intimacy with my spouse.',
+      category: 'Marriage',
+      moodTag: 'grateful',
+      moodEmoji: '🙏',
+      wordCount: 37,
+      sentimentScore: 94,
+      createdAt: '2026-09-14T21:10:00Z',
+      updatedAt: '2026-09-14T21:10:00Z'
+    },
+    {
+      id: 'jrn-3',
       userId: 'usr-member-1',
       date: '2026-09-13',
       prompt: 'Where did you sense God calling you to pause and receive His grace today?',
       scriptureReference: 'Psalm 46:10 — "Be still, and know that I am God."',
       reflectionText: 'I caught myself spiraling over my toddlers crying at the same time I had a deadline. Instead of snapping, I stepped into the hallway, put both hands over my heart, and took five slow breaths. Reminding myself that God gave me this day as a gift, not a performance test.',
       gratitudeNote: 'Grateful for cold water, a husband who cooked dinner, and the quiet hour after 8 PM.',
+      category: 'Motherhood',
       moodTag: 'peaceful',
+      moodEmoji: '🕊️',
+      wordCount: 52,
+      sentimentScore: 86,
       createdAt: '2026-09-13T20:45:00Z',
       updatedAt: '2026-09-13T20:45:00Z'
+    },
+    {
+      id: 'jrn-2',
+      userId: 'usr-member-1',
+      date: '2026-09-11',
+      prompt: 'One Challenge & Growth Edge',
+      scriptureReference: 'Philippians 4:6-7 — "Do not be anxious about anything, but in every situation present your requests to God."',
+      reflectionText: 'Felt anxiety creeping in regarding upcoming speaking engagement. Reminded myself that God does not call the equipped; He equips the called. My identity rests in His daughterhood, not applause or critique.',
+      category: 'Faith',
+      moodTag: 'seeking',
+      moodEmoji: '🌤️',
+      wordCount: 36,
+      sentimentScore: 78,
+      createdAt: '2026-09-11T12:00:00Z',
+      updatedAt: '2026-09-11T12:00:00Z'
+    },
+    {
+      id: 'jrn-1',
+      userId: 'usr-member-1',
+      date: '2026-09-09',
+      prompt: 'One Gratitude for Today',
+      scriptureReference: 'Psalm 103:2 — "Praise the Lord, my soul, and forget not all his benefits."',
+      reflectionText: 'Starting this week with fresh devotion. Blessed to have Christian sisters who check in without pretense. Community is life-giving.',
+      gratitudeNote: 'Text message prayer from sister Andrea.',
+      category: 'Faith',
+      moodTag: 'grateful',
+      moodEmoji: '🙏',
+      wordCount: 23,
+      sentimentScore: 90,
+      createdAt: '2026-09-09T08:30:00Z',
+      updatedAt: '2026-09-09T08:30:00Z'
     }
   ]
 });
@@ -465,11 +563,32 @@ export const mockFallback = {
     scriptureReference: string;
     reflectionText: string;
     gratitudeNote?: string;
+    photoUrl?: string;
+    photoCaption?: string;
+    voiceTranscribed?: boolean;
+    promptCategory?: string;
+    category?: string;
     moodTag?: string;
+    moodEmoji?: string;
+    sentimentScore?: number;
+    wordCount?: number;
   }): Promise<JournalEntry> {
     const cur = getCurrentUser();
     if (!userJournalEntries[cur.id]) userJournalEntries[cur.id] = [];
     const validMoodTag = (entry.moodTag as JournalEntry['moodTag']) || 'peaceful';
+    const computedWordCount = entry.wordCount ?? (entry.reflectionText ? entry.reflectionText.trim().split(/\s+/).filter(Boolean).length : 0);
+    
+    // Calculate a default sentiment score (70-98%) based on keywords or mood if not supplied
+    let computedSentiment = entry.sentimentScore;
+    if (computedSentiment === undefined) {
+      const textLower = (entry.reflectionText + ' ' + (entry.gratitudeNote || '')).toLowerCase();
+      let score = 80;
+      if (textLower.includes('grateful') || textLower.includes('peace') || textLower.includes('thank') || textLower.includes('blessed') || textLower.includes('praise')) score += 12;
+      if (textLower.includes('anxious') || textLower.includes('exhaust') || textLower.includes('spiral') || textLower.includes('burden')) score -= 10;
+      if (textLower.includes('grace') || textLower.includes('surrender') || textLower.includes('christ') || textLower.includes('god')) score += 8;
+      computedSentiment = Math.max(50, Math.min(99, score));
+    }
+
     const newEntry: JournalEntry = {
       id: `jrn-${Date.now()}`,
       userId: cur.id,
@@ -478,7 +597,15 @@ export const mockFallback = {
       scriptureReference: entry.scriptureReference,
       reflectionText: entry.reflectionText,
       gratitudeNote: entry.gratitudeNote,
+      photoUrl: entry.photoUrl,
+      photoCaption: entry.photoCaption,
+      voiceTranscribed: entry.voiceTranscribed,
+      promptCategory: entry.promptCategory,
+      category: entry.category || 'Faith',
       moodTag: validMoodTag,
+      moodEmoji: entry.moodEmoji || (validMoodTag === 'peaceful' ? '🕊️' : validMoodTag === 'grateful' ? '🙏' : validMoodTag === 'strengthened' ? '🌿' : '🌤️'),
+      wordCount: computedWordCount,
+      sentimentScore: computedSentiment,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };

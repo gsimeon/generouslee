@@ -1,6 +1,9 @@
 {
   "name": "Generouslee",
   "description": "Digital platform for healthy self-motivated women of God seeking purpose, temple care, and sisterhood by Latisha Langley (@latishalangley).",
-  "requestFramePermissions": [],
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

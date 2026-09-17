@@ -264,9 +264,41 @@ export interface JournalEntry {
   scriptureReference: string;
   reflectionText: string;
   gratitudeNote?: string;
-  moodTag?: 'peaceful' | 'seeking' | 'grateful' | 'restless' | 'strengthened';
+  photoUrl?: string;
+  photoCaption?: string;
+  voiceTranscribed?: boolean;
+  promptCategory?: string;
+  category?: 'Motherhood' | 'Faith' | 'Career' | 'Marriage' | 'Health & Temple' | 'Personal Growth' | string;
+  moodTag?: 'peaceful' | 'seeking' | 'grateful' | 'restless' | 'strengthened' | string;
+  moodEmoji?: string;
+  sentimentScore?: number; // 0 to 100
+  wordCount?: number;
   createdAt: string;
   updatedAt: string;
+}
+
+export type ReminderFrequency = 'daily' | 'weekly' | 'monthly';
+
+export interface GoalReminder {
+  id: string;
+  goalTitle: string;
+  frequency: ReminderFrequency;
+  timeOfDay: string; // e.g. "08:00"
+  channel: 'toast' | 'browser_push' | 'both';
+  enabled: boolean;
+  lastTriggeredAt?: string;
+  note?: string;
+}
+
+export interface MoodRecord {
+  id: string;
+  date: string; // YYYY-MM-DD
+  emoji: string;
+  label: string;
+  energyLevel: number; // 1-5
+  note?: string;
+  contextTag?: string;
+  timestamp: string;
 }
 
 export interface NewsletterSubscription {
@@ -278,7 +310,14 @@ export interface NewsletterSubscription {
   status: 'active' | 'pending';
 }
 
-export type MilestoneCategory = 'reading_streak' | 'academy_modules' | 'daily_journaling' | 'community_fellowship';
+export type MilestoneCategory =
+  | 'reading_streak'
+  | 'academy_modules'
+  | 'daily_journaling'
+  | 'community_fellowship'
+  | 'goals_habits'
+  | 'sanctuary_memories'
+  | 'spoken_word';
 
 export interface MilestoneBadge {
   id: string;
@@ -286,21 +325,36 @@ export interface MilestoneBadge {
   category: MilestoneCategory;
   description: string;
   iconName: string;
-  level: 'bronze' | 'silver' | 'gold';
+  icon?: string;
+  level: 'bronze' | 'silver' | 'gold' | 'platinum';
   targetValue: number;
   currentValue: number;
   isUnlocked: boolean;
+  unlocked?: boolean;
+  progress?: number;
   unlockedAt?: string;
   rewardPoints: number;
+  scriptureAnchor?: string;
+  rarity?: 'common' | 'rare' | 'epic' | 'legendary';
 }
 
 export interface UserGrowthProfile {
+  level?: number;
+  levelTitle?: string;
+  currentXp?: number;
+  nextLevelXp?: number;
+  overallProgressPercent?: number;
+  journalingStreakDays?: number;
+  completedArticlesCount?: number;
   readingStreakDays: number;
   completedAcademyModules: number;
   consecutiveJournalDays: number;
   totalJournalReflections: number;
   totalArticlesRead: number;
   totalMilestonePoints: number;
+  goalsCompletedCount?: number;
+  photosAttachedCount?: number;
+  voiceReflectionsCount?: number;
   badges: MilestoneBadge[];
 }
 
@@ -331,4 +385,59 @@ export interface DailyReflectionResult {
   prayerThought: string;
   authorLabel: string;
   generatedAt: string;
+}
+
+export interface CommunityChallenge {
+  id: string;
+  title: string;
+  durationDays: number;
+  category: string;
+  badgeIcon: string;
+  description: string;
+  scriptureAnchor: string;
+  participantsCount: number;
+  currentDayPrompt: string;
+  isJoined: boolean;
+  currentDay: number;
+  completedDays: number[];
+  lastCheckInDate?: string;
+  recentSisterActivity?: string;
+}
+
+export interface MentorRequestSubmission {
+  id: string;
+  submittedAt: string;
+  currentLifeSeason: string;
+  growthInterests: string[];
+  primaryGoal: string;
+  preferredCadence: string;
+  additionalContext: string;
+  status: 'pending_match' | 'matched' | 'in_progress';
+  matchedMentorName?: string;
+  matchedMentorRole?: string;
+  matchNotes?: string;
+}
+
+export interface RoadmapStep {
+  id: string;
+  text: string;
+  completed: boolean;
+  isCustom?: boolean;
+}
+
+export interface RoadmapWeek {
+  weekNumber: number;
+  title: string;
+  focusTheme: string;
+  scripture: string;
+  steps: RoadmapStep[];
+}
+
+export interface GrowthRoadmapData {
+  id: string;
+  pathTitle: string;
+  tagline: string;
+  category: string;
+  icon: string;
+  weeks: RoadmapWeek[];
 }
